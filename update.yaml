@@ -1,0 +1,31 @@
+---
+- hosts: all
+  tasks:
+
+    - name: update
+      ansible.builtin.shell: |        
+        dnf check-update
+
+        dnf list updates
+
+        dnf update -y
+
+        dnf clean all -y
+
+        dnf autoremove -y
+
+        exit 0
+      register: shell_output  
+      args:
+        executable: /usr/bin/bash        
+    - debug: var=shell_output
+    
+    - name: reboot 
+      reboot:
+        msg: "Reboot initiated by Ansible"
+        connect_timeout: 5
+        reboot_timeout: 300
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: uptime
+      register: reboot
